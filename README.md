@@ -1,12 +1,12 @@
 # NYANMUSUBI
 
-猫の里親情報をスクレイピングするアプリケーションです。
+猫の里親情報をスクレイピングするアプリケーションです。  
 ポートフォリオとして制作中です。
 
 スクレイピング先は以下の 2 サイト。
 
 - ネコジルシ
-- ぺっとのおうち
+- ペットのおうち
 
 ## 技術スタック
 
@@ -17,12 +17,13 @@
 ## ディレクトリ構成
 
 Yarn の workspace 機能を使って monorepo 化しています。
-`src/backend` ... Graphpack を使った GraphQL の API サーバー
-`src/frontend` ... React・Firebase を使ったフロントエンド
+
+- `src/backend` ... Graphpack を使った GraphQL の API サーバー
+- `src/frontend` ... React・Firebase を使ったフロントエンド
 
 ## メモ
 
-Graphpack は子ワークスペースで管理しないとエラーが起きて起動できない。
+Graphpack は子ワークスペースで管理しないとエラーが起きて起動できない。  
 workspace の root の package.json の`nohoist`に指定する必要がある。
 
 ```json
