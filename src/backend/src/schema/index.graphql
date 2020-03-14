@@ -1,0 +1,43 @@
+type Node {
+  id: ID!
+  title: String!
+  url: String!
+  area: String!
+  period: String!
+  ageRange: String!
+  sex: String!
+  thumbNailUrl: String!
+  from: String!
+}
+
+type PageInfo {
+  total: Int!
+  totalPages: Int!
+  currentPage: Int!
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: String
+  endCursor: String
+}
+
+type Edge {
+  node: Node!
+  cursor: String!
+}
+
+type Conection {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
+}
+
+type Query {
+  infomations(
+    perPage: Int!
+    page: Int!
+    area: String
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): Conection!
+}
