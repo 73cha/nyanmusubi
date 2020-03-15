@@ -11,9 +11,9 @@ type Node {
 }
 
 type PageInfo {
-  total: Int!
-  totalPages: Int!
-  currentPage: Int!
+  total: Int
+  totalPages: Int
+  currentPage: Int
   hasNextPage: Boolean
   hasPreviousPage: Boolean
   startCursor: String
@@ -27,13 +27,13 @@ type Edge {
 
 type Conection {
   edges: [Edge!]!
-  pageInfo: PageInfo!
+  pageInfo: PageInfo
 }
 
 type Query {
   infomations(
-    perPage: Int!
-    page: Int!
+    perPage: Int
+    page: Int
     area: String
     first: Int
     after: String

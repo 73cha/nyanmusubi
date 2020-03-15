@@ -14,8 +14,8 @@ const resolvers = {
         last,
         before,
       }: {
-        perPage: number
-        page: number
+        perPage?: number
+        page?: number
         area?: string
         first?: number
         after?: string
@@ -26,67 +26,58 @@ const resolvers = {
       edges: { node: CatProfile; cursor: string }[]
       pageInfo: PageInfo
     } => {
-      const start = page === 1 ? 0 : (page - 1) * perPage
-      const end = perPage * page
-      const defaultPageInfo: PageInfo = {
-        currentPage: page,
-        hasPreviousPage: page > 1 ? true : false,
-      }
+      const count = INFOMATIONS.length
 
-      if (area) {
-        const infomations = INFOMATIONS.filter(edge =>
-          new RegExp(area).test(edge.area)
-        ).map(edge => ({ node: edge, cursor: edge.id }))
-        const edges = infomations.slice(start, end)
-        const totalPages: number = Math.ceil(infomations.length / perPage)
-
-        if (infomations.length > 0) {
-          return {
-            edges,
-            // prettier-ignore
-            pageInfo: {
-              ...defaultPageInfo,
-              total: infomations.length,
-              totalPages,
-              startCursor: page === 1
-                ? infomations[0].cursor
-                : infomations[end - perPage - 1].cursor, // 前回の結果の最後の要素のcursor
-              endCursor: edges[edges.length - 1].cursor, // 常にedgesの最後のcursor
-              hasNextPage: page < totalPages ? true : false,
-            }
-          }
-        } else {
-          return {
-            edges: infomations,
-            pageInfo: {
-              ...defaultPageInfo,
-              total: edges.length,
-              totalPages,
-              hasPreviousPage: false,
-              hasNextPage: false,
-            },
-          }
-        }
-      } else {
-        const infomations = INFOMATIONS.map(edge => ({
+      if (first && after) {
+        const start = ((): number => {
+          const index = INFOMATIONS.findIndex(info => info.id === after)
+          return index === 0 ? index : index + 1
+        })()
+        const edges = INFOMATIONS.slice(start, start + first).map(edge => ({
           node: edge,
           cursor: edge.id,
         }))
-        const edges = infomations.slice(start, end)
-        const totalPages: number = Math.ceil(INFOMATIONS.length / perPage)
 
         return {
           edges,
           pageInfo: {
-            ...defaultPageInfo,
-            total: INFOMATIONS.length,
-            totalPages,
+            total: count,
+            totalPages: Math.ceil(count / first),
             startCursor:
-              page === 1
-                ? infomations[0].cursor
-                : infomations[end - perPage - 1].cursor, // 前回の結果の最後の要素のcursor
-            endCursor: edges[edges.length - 1].cursor, // 常にedgesの最後のcursor
-            hasNextPage: page < totalPages ? true : false,
+              start === 0 ? edges[0].cursor : INFOMATIONS[start - 1].id,
+            endCursor: edges[edges.length - 1].cursor,
+            currentPage: page,
+            hasNextPage: count < start + first ? false : true,
+          },
+        }
+      }
+
+      if (last && before) {
+        const start = ((): number => {
+          const index = INFOMATIONS.findIndex(info => info.id === before)
+          return index + 1 === count ? -1 : index
+        })()
+        const left = start - count - last
+        const isLeft = count <= Math.abs(left)
+        const end = isLeft ? 0 : left
+
+        console.log(left)
+        const edges = INFOMATIONS.slice(end, start - count).map(edge => ({
+          node: edge,
+          cursor: edge.id,
+        }))
+
+        return {
+          edges,
+          pageInfo: {
+            total: count,
+            totalPages: Math.ceil(count / last),
+            startCursor:
+              start === -1
+                ? edges[edges.length - 1].cursor
+                : INFOMATIONS[start].id,
+            endCursor: edges[0].cursor,
+            hasPreviousPage: isLeft ? false : true,
           },
         }
       }
